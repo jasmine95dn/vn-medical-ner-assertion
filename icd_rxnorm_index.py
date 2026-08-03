@@ -53,7 +53,44 @@ def _word_seg(text: str) -> str:
 # --------------------------------------------------------------------------- #
 # Đọc Excel ICD-10 (linh hoạt cột) + build index.
 # --------------------------------------------------------------------------- #
-_CODE_RE = re.compile(r"^[A-Z]\d{2}(\.\d+)?$")
+# Chấp nhận cả ký hiệu dao găm †/sao * của ICD-10 (mã kép etiology/manifestation).
+_CODE_RE = re.compile(r"^[A-Z]\d{2}(\.\d+)?[†✝*]?$")
+# Ký hiệu dao găm/sao ở cuối mã — strip để ra mã ICD-10 chuẩn (A17.0† -> A17.0).
+_CODE_MARK_RE = re.compile(r"[†✝*]+\s*$")
+
+
+def _normalize_code(raw) -> str:
+    """Bỏ ký hiệu †/* ở cuối và khoảng trắng thừa, trả mã ICD-10 chuẩn."""
+    return _CODE_MARK_RE.sub("", str(raw).strip()).strip()
+
+# Tên cột đã biết ở bản ICD-10 đã làm sạch (ma_benh / ten_benh_vi ...).
+_KNOWN_CODE_COLS = ["ma_benh", "ma_icd10", "ma_icd", "icd10", "code", "ma"]
+_KNOWN_NAME_COLS = ["ten_benh_vi", "ten_benh", "ten_vi", "ten", "name_vi", "disease_name_vi"]
+
+
+def _resolve_columns(df, code_col=None, name_col=None):
+    """Ưu tiên: cột chỉ định → cột tên đã biết → cuối cùng mới auto-dò.
+
+    Trả (code_col, name_col, known); known=True nếu lấy từ tên cột đã biết/chỉ định
+    (khi đó KHÔNG siết _CODE_RE để không loại nhầm mã hợp lệ như 'A17†').
+    """
+    lower = {str(c).lower(): c for c in df.columns}
+    if code_col is None:
+        for k in _KNOWN_CODE_COLS:
+            if k in lower:
+                code_col = lower[k]
+                break
+    if name_col is None:
+        for k in _KNOWN_NAME_COLS:
+            if k in lower:
+                name_col = lower[k]
+                break
+    known = code_col is not None and name_col is not None
+    if not known:
+        auto_c, auto_n = _detect_columns(df)
+        code_col = code_col or auto_c
+        name_col = name_col or auto_n
+    return code_col, name_col, known
 
 
 def _detect_columns(df):
@@ -78,31 +115,63 @@ def _detect_columns(df):
     return code_col, name_col
 
 
-def build_icd_index(icd10_path: str, batch_size: int = 128):
-    """Load Excel, encode tên bệnh bằng CẢ 2 model, trả về IcdIndex.
+def load_icd_rows(icd10_path, code_col=None, name_col=None, require_active=False,
+                  dedupe=True):
+    """Đọc Excel ICD-10 → (rows, code_col, name_col). Tách riêng để test không cần model.
 
-    icd10_path: đường dẫn .xlsx (nhận qua tham số — KHÔNG hardcode).
+    - Tự nhận schema đã làm sạch (ma_benh/ten_benh_vi); nếu không có thì auto-dò cột.
+    - Chuẩn hóa mã: strip †/* ('A17.0†' -> 'A17.0') TRƯỚC khi kiểm tra/dedupe.
+    - dedupe=True: gộp mã trùng sau chuẩn hóa, giữ dòng đầu (→ danh sách mã duy nhất).
+    - require_active: nếu có cột 'hieu_luc' thì chỉ giữ dòng còn hiệu lực.
     """
     import pandas as pd
 
-    # đọc mọi sheet, gộp lại rồi dò cột (bản QĐ 4469 có thể nhiều sheet)
+    # đọc mọi sheet, gộp lại (bản QĐ 4469 có thể nhiều sheet)
     sheets = pd.read_excel(icd10_path, sheet_name=None, dtype=str)
     frames = [s for s in sheets.values() if s is not None and not s.empty]
     df = pd.concat(frames, ignore_index=True) if frames else list(sheets.values())[0]
 
-    code_col, name_col = _detect_columns(df)
+    code_col, name_col, known = _resolve_columns(df, code_col, name_col)
     if code_col is None or name_col is None:
-        raise ValueError(f"Không dò được cột mã/tên trong {icd10_path}")
+        raise ValueError(f"Không xác định được cột mã/tên trong {icd10_path}")
+
+    lower = {str(c).lower(): c for c in df.columns}
+    active_col = lower.get("hieu_luc") if require_active else None
+    active_ok = {"có", "co", "1", "true", "x", "yes"}
 
     rows = []
+    seen = set()
     for _, r in df.iterrows():
-        code = str(r[code_col]).strip()
+        code = _normalize_code(r[code_col])
         name = str(r[name_col]).strip()
         if not name or name.lower() == "nan":
             continue
-        if not _CODE_RE.match(code):
+        if not code or code.lower() == "nan":
             continue
+        if active_col is not None and str(r[active_col]).strip().lower() not in active_ok:
+            continue
+        if not known and not _CODE_RE.match(code):
+            continue
+        if dedupe:
+            if code in seen:
+                continue
+            seen.add(code)
         rows.append({"code": code, "name": name})
+    return rows, code_col, name_col
+
+
+def build_icd_index(icd10_path, batch_size=128, code_col=None, name_col=None,
+                    require_active=False, dedupe=True):
+    """Load Excel, encode tên bệnh bằng CẢ 2 model, trả về IcdIndex.
+
+    icd10_path: đường dẫn .xlsx (nhận qua tham số — KHÔNG hardcode).
+    code_col/name_col: ép tên cột nếu muốn; mặc định tự nhận (ma_benh/ten_benh_vi).
+    """
+    rows, code_col, name_col = load_icd_rows(
+        icd10_path, code_col=code_col, name_col=name_col,
+        require_active=require_active, dedupe=dedupe)
+    if not rows:
+        raise ValueError(f"Không đọc được dòng ICD nào từ {icd10_path}")
 
     names = [r["name"] for r in rows]
 

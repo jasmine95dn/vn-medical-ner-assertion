@@ -25,7 +25,7 @@ import time
 # --------------------------------------------------------------------------- #
 DATA_DIR = os.environ.get("DATA_DIR", "/kaggle/input/ten-dataset-cua-ban")
 INPUT_DIR = os.environ.get("INPUT_DIR", f"{DATA_DIR}/input")
-ICD10_PATH = os.environ.get("ICD10_PATH", f"{DATA_DIR}/icd10_vn.xlsx")
+ICD10_PATH = os.environ.get("ICD10_PATH", f"{DATA_DIR}/ICD10_master_active.xlsx")
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "output")
 
 # data JSON đi kèm repo (few-shot, trigger, negative) — cạnh file main.py
