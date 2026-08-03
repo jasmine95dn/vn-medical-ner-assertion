@@ -42,6 +42,12 @@ QUY TẮC TRÍCH XUẤT (RẤT QUAN TRỌNG — ƯU TIÊN CHÍNH XÁC HƠN SỐ 
    - Cụm mơ hồ/không đặc hiệu: "bất thường", "không đặc hiệu", "khó khăn khi ra khỏi giường".
    - Mệnh đề mô tả dài: chỉ lấy thuật ngữ lõi, KHÔNG lấy cả câu ("đau bụng" chứ không phải "đau bụng dữ dội quanh rốn nhiều ngày kèm nôn").
    - Thời gian/số liệu đứng một mình không gắn với xét nghiệm.
+   - Ký hiệu KÊ ĐƠN (liều/đường dùng/tần suất) — KHÔNG phải TÊN_XÉT_NGHIỆM/KẾT_QUẢ:
+     "25mg", "500mg", "po", "iv", "im", "sc", "bid", "tid", "qd", "viên", "ml", "x2", "uống 2 lần".
+     Với thuốc kèm liều ("metoprolol 25mg po bid") → CHỈ lấy tên thuốc ("metoprolol").
+   - Cơ chế di truyền/nguyên nhân sinh học — KHÔNG phải CHẨN_ĐOÁN:
+     "gen lặn", "nhiễm sắc thể", "đột biến gen", "di truyền lặn", "protein X" — trừ khi là TÊN BỆNH cụ thể.
+   - Từ CHUNG CHUNG đứng một mình (không kèm tên cụ thể): "xét nghiệm", "kết quả", "thuốc", "bệnh", "điều trị".
 3. Span gọn quanh THUẬT NGỮ LÕI, KHÔNG nuốt cả mệnh đề dài. Cho phép bổ ngữ ngắn gắn liền
    ("sốt cao", "đau bụng quanh rốn") nhưng CẮT phần mô tả lê thê ("...liên tục 3 ngày kèm nôn nhiều lần").
 4. Văn bản kiến thức chung/FAQ (không có bệnh nhân cụ thể): CỰC KỲ dè dặt, chỉ lấy khái niệm y khoa nêu đích danh.
