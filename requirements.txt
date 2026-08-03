@@ -1,0 +1,10 @@
+# Vietnamese Medical NER/Assertion/Mapping pipeline
+# Cài trên Kaggle: pip install -r requirements.txt --break-system-packages
+
+pandas
+openpyxl
+underthesea
+sentence-transformers
+requests
+ollama
+datasets

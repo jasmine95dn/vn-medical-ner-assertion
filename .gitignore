@@ -1,0 +1,12 @@
+output/
+__pycache__/
+*.pyc
+.env
+
+# Data nặng / dữ liệu BTC — tách riêng thành Kaggle Dataset, KHÔNG version-control
+data/input/
+data/icd10_vn.xlsx
+
+# Cache embedding / model
+.cache/
+*.log

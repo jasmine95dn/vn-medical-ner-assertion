@@ -1,0 +1,30 @@
+{
+  "_comment": "Bảng trigger words cho 3 assertion. Tự liệt kê tay (KHÔNG dùng LLM sinh). Dùng làm gợi ý trong prompt bước [2] và làm rule-based hint. Model 8B vẫn tự quyết định cuối cùng dựa trên ngữ cảnh, đây chỉ là danh sách tham khảo.",
+  "isNegated": {
+    "description": "Triệu chứng/chẩn đoán/thuốc bị phủ định, KHÔNG xảy ra / KHÔNG dùng.",
+    "triggers": [
+      "không", "không có", "không bị", "không thấy", "không còn",
+      "chưa", "chưa từng", "chưa có", "chưa ghi nhận", "chưa phát hiện",
+      "phủ nhận", "loại trừ", "âm tính", "không dùng", "ngưng", "ngừng",
+      "không sốt", "không ho", "không đau", "không khó thở", "không nôn"
+    ]
+  },
+  "isFamily": {
+    "description": "Sự kiện xảy ra ở NGƯỜI NHÀ, không phải bản thân bệnh nhân.",
+    "triggers": [
+      "bố", "cha", "ba", "mẹ", "má", "ông", "bà", "ông nội", "bà nội",
+      "ông ngoại", "bà ngoại", "anh", "chị", "em", "anh chị em",
+      "anh trai", "chị gái", "em trai", "em gái", "con", "cháu",
+      "người nhà", "gia đình", "họ hàng", "vợ", "chồng", "tiền sử gia đình"
+    ]
+  },
+  "isHistorical": {
+    "description": "Sự kiện thuộc QUÁ KHỨ / tiền sử, không phải tình trạng hiện tại.",
+    "triggers": [
+      "tiền sử", "tiền căn", "đã từng", "từng", "trước đây", "trước kia",
+      "trước đó", "đã", "đã mắc", "đã bị", "đã điều trị", "đã phẫu thuật",
+      "năm trước", "tháng trước", "cách đây", "lâu nay", "trong quá khứ",
+      "hồi", "trước nhập viện", "bệnh sử"
+    ]
+  }
+}
