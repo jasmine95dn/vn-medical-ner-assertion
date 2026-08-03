@@ -33,12 +33,23 @@ ASSERTION (chỉ áp dụng cho TRIỆU_CHỨNG, CHẨN_ĐOÁN, THUỐC — tố
 - isHistorical: thực thể thuộc QUÁ KHỨ / tiền sử (đã từng, trước đây, tiền sử...).
 TÊN_XÉT_NGHIỆM và KẾT_QUẢ_XÉT_NGHIỆM KHÔNG BAO GIỜ có assertion (luôn là []).
 
-QUY TẮC BẮT BUỘC:
-1. Liệt kê MỌI lần xuất hiện, KỂ CẢ trùng lặp. Nếu "vàng da" xuất hiện 3 lần → xuất ra 3 entity riêng.
-2. "text" phải là chuỗi con COPY Y NGUYÊN từ đoạn văn (giữ nguyên dấu, hoa/thường, dấu *). KHÔNG diễn giải, KHÔNG chuẩn hóa.
-3. KHÔNG đoán tên thuốc bị che bằng dấu *. Nếu văn bản ghi "*******", giữ nguyên chuỗi dấu *.
-4. Nếu không có ngữ cảnh bệnh nhân rõ ràng (văn bản kiến thức chung/FAQ), assertions để [] là hợp lệ.
-5. Chỉ trả về JSON hợp lệ theo đúng định dạng, KHÔNG kèm giải thích, KHÔNG markdown.
+QUY TẮC TRÍCH XUẤT (RẤT QUAN TRỌNG — ƯU TIÊN CHÍNH XÁC HƠN SỐ LƯỢNG, TRÍCH ÍT MÀ ĐÚNG):
+1. CHỈ trích khái niệm y khoa CHUẨN, NGẮN GỌN (tên triệu chứng/bệnh/thuốc/xét nghiệm/kết quả cụ thể).
+   Thà BỎ SÓT còn hơn trích thừa. Nếu phân vân một cụm có phải thực thể không → KHÔNG trích.
+2. TUYỆT ĐỐI KHÔNG trích (đây KHÔNG phải thực thể y khoa):
+   - Câu tư vấn/khuyến nghị/câu hỏi/kiến thức giáo dục chung ("nên đi khám", "cần lưu ý", "bệnh này lây qua...").
+   - Hành vi/sinh hoạt: "cho con bú", "chuyển về sống cùng gia đình", "ăn uống điều độ", "chơi với chó".
+   - Cụm mơ hồ/không đặc hiệu: "bất thường", "không đặc hiệu", "khó khăn khi ra khỏi giường".
+   - Mệnh đề mô tả dài: chỉ lấy thuật ngữ lõi, KHÔNG lấy cả câu ("đau bụng" chứ không phải "đau bụng dữ dội quanh rốn nhiều ngày kèm nôn").
+   - Thời gian/số liệu đứng một mình không gắn với xét nghiệm.
+3. Span gọn quanh THUẬT NGỮ LÕI, KHÔNG nuốt cả mệnh đề dài. Cho phép bổ ngữ ngắn gắn liền
+   ("sốt cao", "đau bụng quanh rốn") nhưng CẮT phần mô tả lê thê ("...liên tục 3 ngày kèm nôn nhiều lần").
+4. Văn bản kiến thức chung/FAQ (không có bệnh nhân cụ thể): CỰC KỲ dè dặt, chỉ lấy khái niệm y khoa nêu đích danh.
+5. Liệt kê mọi lần xuất hiện của khái niệm THẬT (kể cả trùng lặp), nhưng KHÔNG bịa/suy diễn thêm.
+6. "text" COPY Y NGUYÊN chuỗi con từ đoạn văn (giữ dấu, hoa/thường, dấu *). KHÔNG diễn giải, KHÔNG chuẩn hóa.
+7. KHÔNG đoán tên thuốc bị che bằng dấu *. Nếu văn bản ghi "*******", giữ nguyên chuỗi dấu *.
+8. Không có ngữ cảnh bệnh nhân rõ ràng → assertions để [] là hợp lệ.
+9. Chỉ trả về JSON hợp lệ theo đúng định dạng, KHÔNG kèm giải thích, KHÔNG markdown.
 
 ĐỊNH DẠNG OUTPUT (JSON):
 {"entities": [{"text": "<chuỗi con>", "type": "<1 trong 5 type>", "assertions": ["isNegated", ...]}]}
@@ -108,7 +119,8 @@ def build_messages(chunk_text, few_shot_examples=None, triggers=None, negative_e
     if ng:
         parts.append(ng)
     parts.append(
-        "Bây giờ trích xuất thực thể từ đoạn sau. Chỉ trả về JSON.\n"
+        "Bây giờ trích xuất thực thể từ đoạn sau. TRÍCH ÍT MÀ ĐÚNG — chỉ khái niệm y khoa "
+        "rõ ràng, ngắn gọn; BỎ QUA câu chung/tư vấn/mô tả dài/cụm mơ hồ. Chỉ trả về JSON.\n"
         f"Input:\n{chunk_text}\nOutput:"
     )
     user_content = "\n\n".join(parts)

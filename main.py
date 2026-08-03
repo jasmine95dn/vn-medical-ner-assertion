@@ -81,8 +81,11 @@ def extract_entities_for_chunk(chunk, few, triggers, negatives):
     return clean
 
 
-def process_file(fileinfo, icd_index, assets, do_candidates, do_rerank):
-    """Chạy full pipeline cho 1 file → list entity cuối (đã validate)."""
+def process_file(fileinfo, icd_index, assets, do_candidates, do_rerank, top_candidates=1):
+    """Chạy full pipeline cho 1 file → list entity cuối (đã validate).
+
+    top_candidates: số mã candidate giữ lại (metric dùng Jaccard → mặc định 1).
+    """
     few, triggers, negatives = assets
     canonical = fileinfo["text"]
     chunks = chunk_text(canonical)
@@ -96,10 +99,11 @@ def process_file(fileinfo, icd_index, assets, do_candidates, do_rerank):
             from candidate_mapping import map_candidates
             for ent in located:
                 if ent["type"] in ("CHẨN_ĐOÁN", "THUỐC"):
-                    ent["candidates"] = map_candidates(
+                    cands = map_candidates(
                         ent, chunk["text"], icd_index,
                         use_llm_rerank=do_rerank,
                     )
+                    ent["candidates"] = cands[:top_candidates] if top_candidates else cands
         all_entities.extend(located)
 
     return merge_and_validate(all_entities, canonical)
@@ -113,6 +117,8 @@ def main():
     ap.add_argument("--limit", type=int, default=None, help="chỉ chạy N file đầu")
     ap.add_argument("--no-candidates", action="store_true", help="bỏ bước [4] (MVP)")
     ap.add_argument("--no-rerank", action="store_true", help="bỏ re-rank LLM [4b]")
+    ap.add_argument("--top-candidates", type=int, default=1,
+                    help="số mã candidate giữ lại (metric Jaccard → mặc định 1)")
     ap.add_argument("--skip-healthcheck", action="store_true")
     args = ap.parse_args()
 
@@ -153,7 +159,8 @@ def main():
     for i, fileinfo in enumerate(files, 1):
         name = fileinfo["filename"]
         try:
-            entities = process_file(fileinfo, icd_index, assets, do_candidates, do_rerank)
+            entities = process_file(fileinfo, icd_index, assets, do_candidates, do_rerank,
+                                    top_candidates=args.top_candidates)
         except Exception as e:  # noqa: BLE001 — 1 file lỗi không được làm hỏng cả batch
             print(f"[{i}/{len(files)}] {name}  ERROR: {e}", file=sys.stderr)
             entities = []
