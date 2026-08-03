@@ -13,6 +13,7 @@ Schema field theo type:
 
 import json
 import os
+import re
 
 VALID_TYPES = {
     "TRIỆU_CHỨNG", "TÊN_XÉT_NGHIỆM", "KẾT_QUẢ_XÉT_NGHIỆM", "CHẨN_ĐOÁN", "THUỐC",
@@ -20,6 +21,37 @@ VALID_TYPES = {
 TYPES_WITH_ASSERTION = {"TRIỆU_CHỨNG", "CHẨN_ĐOÁN", "THUỐC"}
 TYPES_WITH_CANDIDATES = {"CHẨN_ĐOÁN", "THUỐC"}
 VALID_ASSERTIONS = ["isNegated", "isFamily", "isHistorical"]  # giữ thứ tự chuẩn
+
+# --- Bộ lọc noise xác định (8B hay trích dù prompt đã cấm) ---
+# Từ chung chung đứng một mình — không bao giờ là thực thể hợp lệ.
+_JUNK_GENERIC = {
+    "xét nghiệm", "kết quả", "thuốc", "bệnh", "điều trị", "chẩn đoán",
+    "triệu chứng", "kết quả xét nghiệm", "khám", "theo dõi",
+}
+# Cụm cơ chế di truyền/nguyên nhân — không phải CHẨN_ĐOÁN.
+_JUNK_GENETIC = {
+    "nhiễm sắc thể", "nhiễm sắc thể x", "nhiễm sắc thể giới tính",
+    "bệnh di truyền lặn", "di truyền lặn", "gen lặn", "gen lặn bất thường",
+    "đột biến gen", "di truyền",
+}
+# Ký hiệu kê đơn: đường dùng / tần suất.
+_JUNK_ROUTE_FREQ = {
+    "po", "iv", "im", "sc", "bid", "tid", "qid", "qd", "qhs", "prn",
+    "q6h", "q8h", "q12h", "od", "bd",
+}
+# Liều đơn thuần "25mg", "500 mg", "2 viên" — KHÔNG phải xét nghiệm/kết quả.
+_DOSE_RE = re.compile(
+    r"^\d+([.,]\d+)?\s*(mg|mcg|µg|g|ml|l|iu|ui|viên|gói|ống|đvqt)$", re.IGNORECASE
+)
+
+
+def _is_junk_text(text: str) -> bool:
+    """True nếu text là noise xác định (từ chung/di truyền/liều/đường dùng)."""
+    s = text.strip().lower()
+    if not s:
+        return True
+    return (s in _JUNK_GENERIC or s in _JUNK_GENETIC or s in _JUNK_ROUTE_FREQ
+            or bool(_DOSE_RE.match(s)))
 
 
 def _clean_assertions(raw):
@@ -68,6 +100,10 @@ def build_entity(ent, canonical_text):
     if text != sliced:
         # nếu lệch, ưu tiên bám position: dùng lát cắt làm text chính thức
         text = sliced
+
+    # lọc noise xác định 8B hay trích (dosing, từ chung, cơ chế di truyền)
+    if _is_junk_text(text):
+        return None
 
     out = {"text": text, "position": [s, e], "type": etype}
 
