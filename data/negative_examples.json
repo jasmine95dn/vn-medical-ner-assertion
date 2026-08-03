@@ -1,0 +1,80 @@
+[
+  {
+    "text": "Không chỉ sốt mà bệnh nhân còn ho nhiều và đau họng.",
+    "note": "'Không chỉ ... mà còn' là cấu trúc nhấn mạnh, KHÔNG phủ định. Các triệu chứng đều CÓ.",
+    "entities": [
+      {"text": "sốt", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "ho", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "đau họng", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân đau bụng dữ dội đến mức không thể chịu được.",
+    "note": "'không thể chịu được' mô tả mức độ đau, KHÔNG phủ định triệu chứng đau bụng.",
+    "entities": [
+      {"text": "đau bụng dữ dội", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân là mẹ của hai con, hiện bị tăng huyết áp và đau đầu.",
+    "note": "'mẹ' chỉ vai trò của chính bệnh nhân, KHÔNG phải người nhà → không isFamily.",
+    "entities": [
+      {"text": "tăng huyết áp", "type": "CHẨN_ĐOÁN", "assertions": []},
+      {"text": "đau đầu", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân từ trước đến nay vẫn khỏe mạnh, nay đột ngột sốt cao và nôn ói.",
+    "note": "'từ trước đến nay' chỉ bối cảnh; triệu chứng sốt/nôn là HIỆN TẠI → không isHistorical.",
+    "entities": [
+      {"text": "sốt cao", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "nôn ói", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân sốt đã 3 ngày nhưng chưa dùng thuốc hạ sốt nào.",
+    "note": "'chưa dùng' phủ định việc dùng THUỐC (thuốc hạ sốt → isNegated), nhưng 'sốt' vẫn CÓ, không bị phủ định.",
+    "entities": [
+      {"text": "sốt", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "thuốc hạ sốt", "type": "THUỐC", "assertions": ["isNegated"]}
+    ]
+  },
+  {
+    "text": "Kết quả xét nghiệm không loại trừ khả năng viêm phổi.",
+    "note": "'không loại trừ' nghĩa là VẪN CÒN khả năng → viêm phổi KHÔNG bị phủ định (đừng gán isNegated).",
+    "entities": [
+      {"text": "viêm phổi", "type": "CHẨN_ĐOÁN", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bố bị ung thư phổi, nhưng bản thân bệnh nhân hiện chỉ ho khan và mệt mỏi.",
+    "note": "'ung thư phổi' là của bố → isFamily. Còn 'ho khan', 'mệt mỏi' là của bệnh nhân → không isFamily.",
+    "entities": [
+      {"text": "ung thư phổi", "type": "CHẨN_ĐOÁN", "assertions": ["isFamily"]},
+      {"text": "ho khan", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "mệt mỏi", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân đã được chẩn đoán viêm phổi và đang điều trị bằng kháng sinh.",
+    "note": "'đã được chẩn đoán ... đang điều trị' là tình trạng HIỆN TẠI đang diễn ra, KHÔNG phải tiền sử → không isHistorical.",
+    "entities": [
+      {"text": "viêm phổi", "type": "CHẨN_ĐOÁN", "assertions": []},
+      {"text": "kháng sinh", "type": "THUỐC", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân buồn nôn, không rõ có liên quan đến bữa ăn hay không.",
+    "note": "'không rõ ... hay không' là sự không chắc chắn về nguyên nhân; 'buồn nôn' vẫn CÓ → không isNegated.",
+    "entities": [
+      {"text": "buồn nôn", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Người nhà cho biết bệnh nhân lên cơn co giật tại nhà.",
+    "note": "'Người nhà' chỉ là người kể lại; triệu chứng 'co giật' là của BỆNH NHÂN → không isFamily.",
+    "entities": [
+      {"text": "co giật", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  }
+]

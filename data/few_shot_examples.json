@@ -1,0 +1,102 @@
+[
+  {
+    "text": "Bệnh nhân nam 65 tuổi vào viện vì sốt cao và ho khan, không khó thở, không đau ngực.",
+    "entities": [
+      {"text": "sốt cao", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "ho khan", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "khó thở", "type": "TRIỆU_CHỨNG", "assertions": ["isNegated"]},
+      {"text": "đau ngực", "type": "TRIỆU_CHỨNG", "assertions": ["isNegated"]}
+    ]
+  },
+  {
+    "text": "Tiền sử gia đình: bố bị đái tháo đường type 2, mẹ từng bị tăng huyết áp.",
+    "entities": [
+      {"text": "đái tháo đường type 2", "type": "CHẨN_ĐOÁN", "assertions": ["isFamily"]},
+      {"text": "tăng huyết áp", "type": "CHẨN_ĐOÁN", "assertions": ["isFamily", "isHistorical"]}
+    ]
+  },
+  {
+    "text": "Bệnh nhân từng bị viêm loét dạ dày cách đây 3 năm, hiện đã ổn định.",
+    "entities": [
+      {"text": "viêm loét dạ dày", "type": "CHẨN_ĐOÁN", "assertions": ["isHistorical"]}
+    ]
+  },
+  {
+    "text": "Xét nghiệm định lượng G6PD cho kết quả 0.5 U/g Hb, glucose máu 6.2 mmol/L.",
+    "entities": [
+      {"text": "định lượng G6PD", "type": "TÊN_XÉT_NGHIỆM", "assertions": []},
+      {"text": "0.5 U/g Hb", "type": "KẾT_QUẢ_XÉT_NGHIỆM", "assertions": []},
+      {"text": "glucose máu", "type": "TÊN_XÉT_NGHIỆM", "assertions": []},
+      {"text": "6.2 mmol/L", "type": "KẾT_QUẢ_XÉT_NGHIỆM", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân được kê paracetamol và amoxicillin, ngưng aspirin do tiền sử xuất huyết tiêu hóa.",
+    "entities": [
+      {"text": "paracetamol", "type": "THUỐC", "assertions": []},
+      {"text": "amoxicillin", "type": "THUỐC", "assertions": []},
+      {"text": "aspirin", "type": "THUỐC", "assertions": ["isNegated"]},
+      {"text": "xuất huyết tiêu hóa", "type": "TRIỆU_CHỨNG", "assertions": ["isHistorical"]}
+    ]
+  },
+  {
+    "text": "Người thiếu men G6PD cần tránh thuốc giảm đau, hạ sốt chứa ******* hoặc **********.",
+    "entities": [
+      {"text": "thiếu men G6PD", "type": "CHẨN_ĐOÁN", "assertions": []},
+      {"text": "*******", "type": "THUỐC", "assertions": []},
+      {"text": "**********", "type": "THUỐC", "assertions": []}
+    ]
+  },
+  {
+    "text": "Vàng da là triệu chứng thường gặp ở trẻ sơ sinh thiếu men G6PD. Vàng da có thể kèm vàng mắt và nước tiểu sẫm màu.",
+    "entities": [
+      {"text": "Vàng da", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "thiếu men G6PD", "type": "CHẨN_ĐOÁN", "assertions": []},
+      {"text": "Vàng da", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "vàng mắt", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "nước tiểu sẫm màu", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Bệnh nhân THA và ĐTĐ nhiều năm, gần đây xuất hiện khó thở khi gắng sức.",
+    "entities": [
+      {"text": "THA", "type": "CHẨN_ĐOÁN", "assertions": ["isHistorical"]},
+      {"text": "ĐTĐ", "type": "CHẨN_ĐOÁN", "assertions": ["isHistorical"]},
+      {"text": "khó thở khi gắng sức", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Chẩn đoán: đợt cấp COPD. Loại trừ NMCT cấp sau khi men tim âm tính.",
+    "entities": [
+      {"text": "đợt cấp COPD", "type": "CHẨN_ĐOÁN", "assertions": []},
+      {"text": "NMCT cấp", "type": "CHẨN_ĐOÁN", "assertions": ["isNegated"]},
+      {"text": "men tim", "type": "TÊN_XÉT_NGHIỆM", "assertions": []},
+      {"text": "âm tính", "type": "KẾT_QUẢ_XÉT_NGHIỆM", "assertions": []}
+    ]
+  },
+  {
+    "text": "Đái tháo đường là bệnh mạn tính. Người bệnh cần kiểm tra HbA1c định kỳ; nếu kết quả trên 7% cần điều chỉnh liều insulin.",
+    "entities": [
+      {"text": "Đái tháo đường", "type": "CHẨN_ĐOÁN", "assertions": []},
+      {"text": "HbA1c", "type": "TÊN_XÉT_NGHIỆM", "assertions": []},
+      {"text": "trên 7%", "type": "KẾT_QUẢ_XÉT_NGHIỆM", "assertions": []},
+      {"text": "insulin", "type": "THUỐC", "assertions": []}
+    ]
+  },
+  {
+    "text": "Trẻ quấy khóc, bỏ bú, sốt 39 độ, co giật một cơn.",
+    "entities": [
+      {"text": "quấy khóc", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "bỏ bú", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "sốt 39 độ", "type": "TRIỆU_CHỨNG", "assertions": []},
+      {"text": "co giật", "type": "TRIỆU_CHỨNG", "assertions": []}
+    ]
+  },
+  {
+    "text": "Mẹ bệnh nhân bị hen phế quản và thường xuyên dùng ventolin.",
+    "entities": [
+      {"text": "hen phế quản", "type": "CHẨN_ĐOÁN", "assertions": ["isFamily"]},
+      {"text": "ventolin", "type": "THUỐC", "assertions": ["isFamily"]}
+    ]
+  }
+]

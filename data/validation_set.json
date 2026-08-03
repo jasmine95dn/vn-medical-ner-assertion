@@ -1,0 +1,317 @@
+[
+  {
+    "text": "Bệnh nhân nữ 58 tuổi, tiền sử tăng huyết áp, nhập viện vì đau đầu và chóng mặt, không sốt.",
+    "entities": [
+      {
+        "text": "tăng huyết áp",
+        "position": [
+          30,
+          43
+        ],
+        "type": "CHẨN_ĐOÁN",
+        "assertions": [
+          "isHistorical"
+        ],
+        "candidates": []
+      },
+      {
+        "text": "đau đầu",
+        "position": [
+          58,
+          65
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "chóng mặt",
+        "position": [
+          69,
+          78
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "sốt",
+        "position": [
+          86,
+          89
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": [
+          "isNegated"
+        ]
+      }
+    ]
+  },
+  {
+    "text": "Trẻ 2 tuổi sốt cao liên tục 3 ngày, ho có đờm, được chẩn đoán viêm phổi và kê amoxicillin.",
+    "entities": [
+      {
+        "text": "sốt cao",
+        "position": [
+          11,
+          18
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "ho có đờm",
+        "position": [
+          36,
+          45
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "viêm phổi",
+        "position": [
+          62,
+          71
+        ],
+        "type": "CHẨN_ĐOÁN",
+        "assertions": [],
+        "candidates": []
+      },
+      {
+        "text": "amoxicillin",
+        "position": [
+          78,
+          89
+        ],
+        "type": "THUỐC",
+        "assertions": [],
+        "candidates": []
+      }
+    ]
+  },
+  {
+    "text": "Xét nghiệm công thức máu: bạch cầu 14 G/L, CRP dương tính, cấy máu âm tính.",
+    "entities": [
+      {
+        "text": "công thức máu",
+        "position": [
+          11,
+          24
+        ],
+        "type": "TÊN_XÉT_NGHIỆM"
+      },
+      {
+        "text": "bạch cầu 14 G/L",
+        "position": [
+          26,
+          41
+        ],
+        "type": "KẾT_QUẢ_XÉT_NGHIỆM"
+      },
+      {
+        "text": "CRP",
+        "position": [
+          43,
+          46
+        ],
+        "type": "TÊN_XÉT_NGHIỆM"
+      },
+      {
+        "text": "dương tính",
+        "position": [
+          47,
+          57
+        ],
+        "type": "KẾT_QUẢ_XÉT_NGHIỆM"
+      },
+      {
+        "text": "cấy máu",
+        "position": [
+          59,
+          66
+        ],
+        "type": "TÊN_XÉT_NGHIỆM"
+      },
+      {
+        "text": "âm tính",
+        "position": [
+          67,
+          74
+        ],
+        "type": "KẾT_QUẢ_XÉT_NGHIỆM"
+      }
+    ]
+  },
+  {
+    "text": "Bố bệnh nhân từng bị nhồi máu cơ tim, bản thân bệnh nhân hiện đau ngực khi gắng sức.",
+    "entities": [
+      {
+        "text": "nhồi máu cơ tim",
+        "position": [
+          21,
+          36
+        ],
+        "type": "CHẨN_ĐOÁN",
+        "assertions": [
+          "isFamily",
+          "isHistorical"
+        ],
+        "candidates": []
+      },
+      {
+        "text": "đau ngực khi gắng sức",
+        "position": [
+          62,
+          83
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      }
+    ]
+  },
+  {
+    "text": "Người bệnh đái tháo đường cần kiểm tra HbA1c định kỳ và tuân thủ dùng insulin.",
+    "entities": [
+      {
+        "text": "đái tháo đường",
+        "position": [
+          11,
+          25
+        ],
+        "type": "CHẨN_ĐOÁN",
+        "assertions": [],
+        "candidates": []
+      },
+      {
+        "text": "HbA1c",
+        "position": [
+          39,
+          44
+        ],
+        "type": "TÊN_XÉT_NGHIỆM"
+      },
+      {
+        "text": "insulin",
+        "position": [
+          70,
+          77
+        ],
+        "type": "THUỐC",
+        "assertions": [],
+        "candidates": []
+      }
+    ]
+  },
+  {
+    "text": "Bệnh nhân phủ nhận tiền sử dị ứng thuốc, chưa từng dùng kháng sinh nhóm penicillin.",
+    "entities": [
+      {
+        "text": "dị ứng thuốc",
+        "position": [
+          27,
+          39
+        ],
+        "type": "CHẨN_ĐOÁN",
+        "assertions": [
+          "isNegated",
+          "isHistorical"
+        ],
+        "candidates": []
+      },
+      {
+        "text": "kháng sinh nhóm penicillin",
+        "position": [
+          56,
+          82
+        ],
+        "type": "THUỐC",
+        "assertions": [
+          "isNegated",
+          "isHistorical"
+        ],
+        "candidates": []
+      }
+    ]
+  },
+  {
+    "text": "Trẻ sơ sinh thiếu men G6PD có thể bị vàng da, vàng mắt; vàng da nặng cần chiếu đèn.",
+    "entities": [
+      {
+        "text": "thiếu men G6PD",
+        "position": [
+          12,
+          26
+        ],
+        "type": "CHẨN_ĐOÁN",
+        "assertions": [],
+        "candidates": []
+      },
+      {
+        "text": "vàng da",
+        "position": [
+          37,
+          44
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "vàng mắt",
+        "position": [
+          46,
+          54
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "vàng da",
+        "position": [
+          56,
+          63
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      }
+    ]
+  },
+  {
+    "text": "Bệnh nhân buồn nôn, nôn nhiều, đau thượng vị; siêu âm ổ bụng chưa phát hiện bất thường.",
+    "entities": [
+      {
+        "text": "buồn nôn",
+        "position": [
+          10,
+          18
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "nôn nhiều",
+        "position": [
+          20,
+          29
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "đau thượng vị",
+        "position": [
+          31,
+          44
+        ],
+        "type": "TRIỆU_CHỨNG",
+        "assertions": []
+      },
+      {
+        "text": "siêu âm ổ bụng",
+        "position": [
+          46,
+          60
+        ],
+        "type": "TÊN_XÉT_NGHIỆM"
+      }
+    ]
+  }
+]
