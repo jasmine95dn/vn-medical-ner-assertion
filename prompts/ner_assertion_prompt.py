@@ -134,3 +134,34 @@ def build_messages(chunk_text, few_shot_examples=None, triggers=None, negative_e
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": user_content},
     ]
+
+
+VERIFY_SYSTEM = """\
+Bạn là chuyên gia y khoa rà soát kết quả trích xuất thực thể.
+Cho MỘT câu và danh sách cụm đã đánh số được rút ra từ câu đó. Nhiệm vụ: giữ lại
+CHỈ những cụm là thực thể y khoa THẬT SỰ, cụ thể (triệu chứng/xét nghiệm/kết quả
+xét nghiệm/chẩn đoán/thuốc). LOẠI những cụm:
+- Từ chung chung, không đặc hiệu, mô tả dài dòng, hành vi/sinh hoạt.
+- Cơ chế/nguyên nhân sinh học, câu tư vấn/kiến thức chung.
+- Không mang nghĩa lâm sàng cụ thể.
+Chỉ trả về JSON: {"keep": [danh sách CHỈ SỐ (số nguyên) cần GIỮ]}. Không giải thích."""
+
+
+def build_verify_messages(chunk_text, entities):
+    """Bước [2b] tự phản biện: hỏi model cụm nào là thực thể THẬT để giữ.
+
+    entities: list dict có 'text','type'. Trả messages cho chat_json.
+    Model trả {"keep": [idx...]} — chỉ số (0-based) các entity cần giữ.
+    """
+    listing = "\n".join(
+        f"{i}. [{e.get('type')}] {e.get('text')}" for i, e in enumerate(entities)
+    )
+    user = (
+        f"Câu:\n{chunk_text}\n\n"
+        f"Các cụm đã trích (giữ cụm y khoa thật, loại cụm mơ hồ/chung/mô tả):\n{listing}\n\n"
+        'Trả về JSON {"keep": [chỉ số cần giữ]}.'
+    )
+    return [
+        {"role": "system", "content": VERIFY_SYSTEM},
+        {"role": "user", "content": user},
+    ]

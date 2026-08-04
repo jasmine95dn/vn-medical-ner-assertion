@@ -36,7 +36,7 @@ from preprocess import load_and_clean, iter_input_files  # noqa: E402
 from chunker import chunk_text  # noqa: E402
 from position_recovery import recover_positions  # noqa: E402
 from merge_validate import merge_and_validate, write_output  # noqa: E402
-from prompts.ner_assertion_prompt import build_messages  # noqa: E402
+from prompts.ner_assertion_prompt import build_messages, build_verify_messages  # noqa: E402
 
 
 def _load_json(path, default):
@@ -62,7 +62,29 @@ def load_prompt_assets():
     return few, triggers, negatives
 
 
-def extract_entities_for_chunk(chunk, few, triggers, negatives):
+def _verify_entities(chunk_text, entities):
+    """Bước [2b] tự phản biện: gọi LLM giữ lại entity y khoa thật (bỏ cụm mơ hồ)."""
+    from llm_client import chat_json
+
+    if not entities:
+        return entities
+    data = chat_json(build_verify_messages(chunk_text, entities), default=None)
+    if not isinstance(data, dict) or "keep" not in data:
+        return entities  # lỗi/parse fail → giữ nguyên (không tự ý xóa)
+    keep = set()
+    for i in data.get("keep", []):
+        try:
+            keep.add(int(i))
+        except (ValueError, TypeError):
+            continue
+    filtered = [e for i, e in enumerate(entities) if i in keep]
+    # phòng model trả rỗng/loạn → nếu bỏ >90% thì coi như không tin, giữ nguyên
+    if len(filtered) < max(1, int(0.1 * len(entities))) and len(entities) >= 3:
+        return entities
+    return filtered
+
+
+def extract_entities_for_chunk(chunk, few, triggers, negatives, verify=False):
     """Bước [2]: gọi Qwen3-8B trên 1 chunk → list entity {text,type,assertions}."""
     from llm_client import chat_json
 
@@ -78,13 +100,17 @@ def extract_entities_for_chunk(chunk, few, triggers, negatives):
                 "type": e.get("type"),
                 "assertions": e.get("assertions", []),
             })
+    if verify:
+        clean = _verify_entities(chunk["text"], clean)
     return clean
 
 
-def process_file(fileinfo, icd_index, assets, do_candidates, do_rerank, top_candidates=1):
+def process_file(fileinfo, icd_index, assets, do_candidates, do_rerank,
+                 top_candidates=1, verify=False):
     """Chạy full pipeline cho 1 file → list entity cuối (đã validate).
 
     top_candidates: số mã candidate giữ lại (metric dùng Jaccard → mặc định 1).
+    verify: bật bước [2b] tự phản biện (LLM lọc lại entity, chậm hơn ~2x).
     """
     few, triggers, negatives = assets
     canonical = fileinfo["text"]
@@ -92,7 +118,7 @@ def process_file(fileinfo, icd_index, assets, do_candidates, do_rerank, top_cand
 
     all_entities = []
     for chunk in chunks:
-        raw_ents = extract_entities_for_chunk(chunk, few, triggers, negatives)
+        raw_ents = extract_entities_for_chunk(chunk, few, triggers, negatives, verify=verify)
         located = recover_positions(raw_ents, chunk)  # gắn position toàn cục
 
         if do_candidates:
@@ -119,6 +145,8 @@ def main():
     ap.add_argument("--no-rerank", action="store_true", help="bỏ re-rank LLM [4b]")
     ap.add_argument("--top-candidates", type=int, default=1,
                     help="số mã candidate giữ lại (metric Jaccard → mặc định 1)")
+    ap.add_argument("--verify", action="store_true",
+                    help="bật bước [2b] two-pass verify (LLM lọc lại entity, chậm ~2x)")
     ap.add_argument("--skip-healthcheck", action="store_true")
     args = ap.parse_args()
 
@@ -160,7 +188,7 @@ def main():
         name = fileinfo["filename"]
         try:
             entities = process_file(fileinfo, icd_index, assets, do_candidates, do_rerank,
-                                    top_candidates=args.top_candidates)
+                                    top_candidates=args.top_candidates, verify=args.verify)
         except Exception as e:  # noqa: BLE001 — 1 file lỗi không được làm hỏng cả batch
             print(f"[{i}/{len(files)}] {name}  ERROR: {e}", file=sys.stderr)
             entities = []
